@@ -102,12 +102,14 @@ npm run prove:michocoq
 | Proof | Property | Result (Oct 27, 2026) |
 | --- | --- | --- |
 | `purchase_p5` | For every environment, storage and fuel ≥ 60: if `purchase` succeeds, the artist has a `contract unit` `c` and the operations are exactly `[transfer of AMOUNT to c; SET_DELEGATE None]` (the event placeholder) | Proved |
+| `purchase_p5_not_vacuous` | A concrete chain context, environment and storage (one active 1-mutez listing) where `purchase(artist, Listing 0, Personal, 1)` with 1 mutez succeeds, so `purchase_p5`'s premise can hold | Proved |
 
 `gam_source.v` has Coq run Mi-Cho-Coq's parser and typer on the text of
 `out/gam.prove.tz` (embedded by `gen_string.py`), so the proof is about that
 exact file. `run.sh` fails if the proof rests on anything beyond Coq's
 primitive-integer axioms, Mi-Cho-Coq's abstract BLS12-381 operations and the
-abstract contract lookup `C.get_contract_type`. The check takes about a minute.
+abstract contract lookup `C.get_contract_type`. The check takes about four
+minutes, most of it Coq evaluating the witness purchase.
 Mi-Cho-Coq builds natively into `tezos/vendor/mi-cho-coq` with
 `proofs/michocoq/setup.sh` (Coq 8.16.1).
 

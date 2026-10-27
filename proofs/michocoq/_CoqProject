@@ -3,4 +3,5 @@
 gam_prove_string.v
 gam_source.v
 purchase_p5.v
+purchase_witness.v
 assumptions.v
