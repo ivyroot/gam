@@ -1,0 +1,867 @@
+{
+  parameter
+    (or
+      (pair %review
+        (address %artist)
+        (pair
+          (or %target
+            (nat %listing)
+            (nat %collection))
+          (pair
+            (option %rating nat)
+            (option %comment bytes))))
+      (or
+        (pair %purchase
+          (address %artist)
+          (pair
+            (or %target
+              (nat %listing)
+              (nat %collection))
+            (pair
+              (or %tier
+                (unit %personal)
+                (unit %commercial))
+              (nat %quantity))))
+        (or
+          (pair %set_collection_item
+            (nat %collection_id)
+            (pair
+              (nat %listing_id)
+              (bool %included)))
+          (or
+            (pair %set_collection
+              (nat %collection_id)
+              (pair
+                (bytes %title)
+                (pair
+                  (bytes %description)
+                  (pair
+                    (mutez %personal_display_price)
+                    (pair
+                      (mutez %commercial_display_price)
+                      (pair
+                        (nat %website_id)
+                        (bool %active)))))))
+            (or
+              (pair %list
+                (nat %listing_id)
+                (pair
+                  (bytes %title)
+                  (pair
+                    (bytes %item_type)
+                    (pair
+                      (bytes %description)
+                      (pair
+                        (mutez %personal_display_price)
+                        (pair
+                          (mutez %commercial_display_price)
+                          (pair
+                            (nat %website_id)
+                            (pair
+                              (bool %active)
+                              (bytes %file_hash)))))))))
+              (or
+                (pair %set_website
+                  (nat %website_id)
+                  (string %url))
+                (bytes %set_name)))))));
+  storage
+    (pair
+      (big_map %names address bytes)
+      (pair
+        (big_map %websites
+          (pair address nat)
+          string)
+        (pair
+          (big_map %listings
+            (pair address nat)
+            (pair
+              (bytes %title)
+              (pair
+                (bytes %item_type)
+                (pair
+                  (bytes %description)
+                  (pair
+                    (mutez %personal_display_price)
+                    (pair
+                      (mutez %commercial_display_price)
+                      (pair
+                        (nat %website_id)
+                        (pair
+                          (bool %active)
+                          (bytes %file_hash)))))))))
+          (pair
+            (big_map %collections
+              (pair address nat)
+              (pair
+                (bytes %title)
+                (pair
+                  (bytes %description)
+                  (pair
+                    (mutez %personal_display_price)
+                    (pair
+                      (mutez %commercial_display_price)
+                      (pair
+                        (nat %website_id)
+                        (bool %active)))))))
+            (pair
+              (big_map %collection_items
+                (pair
+                  address
+                  (pair nat nat))
+                unit)
+              (pair
+                (big_map %licenses
+                  (pair
+                    address
+                    (pair
+                      address
+                      (or
+                        (nat %listing)
+                        (nat %collection))))
+                  (pair
+                    (nat %personal)
+                    (pair
+                      (nat %commercial)
+                      (nat %purchased_at_level))))
+                (big_map %reviews
+                  (pair
+                    address
+                    (pair
+                      address
+                      (or
+                        (nat %listing)
+                        (nat %collection))))
+                  (pair
+                    (option %rating nat)
+                    (pair
+                      (option %comment bytes)
+                      (pair
+                        (timestamp %posted_at)
+                        (timestamp %updated_at)))))))))));
+<< ContractAnnot %set_website
+  { ((wid, url), (names, (websites, (listings, (collections, (items, (licenses, reviews))))))) | True } ->
+  { (_, (names2, (websites2, (listings2, (collections2, (items2, (licenses2, reviews2))))))) |
+      websites2 = update_b (sender, wid) (find_opt_b (sender, wid) websites2) websites &&
+      names2 = names && listings2 = listings && collections2 = collections &&
+      items2 = items && licenses2 = licenses && reviews2 = reviews } &
+  { _ | True } >>
+  code
+    {
+      UNPAIR;
+      IF_LEFT
+        {
+          SENDER;
+          DUP 2;
+          GET 3;
+          DUP 3;
+          CAR;
+          DUP 3;
+          PAIR 3;
+          DUP 4;
+          GET 11;
+          DUP 2;
+          GET;
+          IF_NONE
+            {
+              PUSH string "NO_LICENSE";
+              FAILWITH
+            }
+            {
+            };
+          DUP 4;
+          GET 5;
+          IF_NONE
+            {
+              DUP 4;
+              GET 6;
+              IF_NONE
+                {
+                  PUSH string "EMPTY_REVIEW";
+                  FAILWITH
+                }
+                {
+                  DROP
+                }
+            }
+            {
+              PUSH nat 10;
+              DUP 2;
+              COMPARE;
+              GT;
+              PUSH nat 1;
+              DIG 2;
+              COMPARE;
+              LT;
+              OR;
+              IF
+                {
+                  PUSH string "BAD_RATING";
+                  FAILWITH
+                }
+                {
+                }
+            };
+          GET 4;
+          LEVEL;
+          COMPARE;
+          LE;
+          IF
+            {
+              PUSH string "TOO_EARLY";
+              FAILWITH
+            }
+            {
+            };
+          NOW;
+          DUP 5;
+          GET 12;
+          DUP 3;
+          GET;
+          IF_NONE
+            {
+              DUP
+            }
+            {
+              GET 5
+            };
+          DUP 2;
+          DUP 2;
+          DUP 7;
+          GET 6;
+          DUP 8;
+          GET 5;
+          DUP 9;
+          GET 3;
+          DUP 10;
+          CAR;
+          DIG 9;
+          PAIR 7;
+          {
+            DROP;
+            NONE key_hash;
+            SET_DELEGATE
+          };
+          DIG 5;
+          DUP;
+          GET 12;
+          DIG 4;
+          DIG 4;
+          DUP 7;
+          GET 6;
+          DIG 7;
+          GET 5;
+          PAIR 4;
+          SOME;
+          DIG 4;
+          UPDATE;
+          UPDATE 12;
+          NIL operation;
+          DIG 2;
+          CONS
+        }
+        {
+          IF_LEFT
+            {
+              PUSH nat 0;
+              DUP 2;
+              GET 6;
+              COMPARE;
+              EQ;
+              IF
+                {
+                  PUSH string "ZERO_QUANTITY";
+                  FAILWITH
+                }
+                {
+                };
+              DUP;
+              GET 3;
+              IF_LEFT
+                {
+                  DUP 3;
+                  GET 5;
+                  SWAP;
+                  DUP 3;
+                  CAR;
+                  PAIR;
+                  GET;
+                  IF_NONE
+                    {
+                      PUSH string "UNKNOWN_LISTING";
+                      FAILWITH
+                    }
+                    {
+                      DUP;
+                      GET 13;
+                      IF
+                        {
+                          DUP;
+                          GET 9;
+                          SWAP;
+                          GET 7;
+                          PAIR
+                        }
+                        {
+                          PUSH string "NOT_ACTIVE";
+                          FAILWITH
+                        }
+                    }
+                }
+                {
+                  DUP 3;
+                  GET 7;
+                  SWAP;
+                  DUP 3;
+                  CAR;
+                  PAIR;
+                  GET;
+                  IF_NONE
+                    {
+                      PUSH string "UNKNOWN_COLLECTION";
+                      FAILWITH
+                    }
+                    {
+                      DUP;
+                      GET 10;
+                      IF
+                        {
+                          DUP;
+                          GET 7;
+                          SWAP;
+                          GET 5;
+                          PAIR
+                        }
+                        {
+                          PUSH string "NOT_ACTIVE";
+                          FAILWITH
+                        }
+                    }
+                };
+              UNPAIR;
+              DUP 3;
+              GET 5;
+              IF_LEFT
+                {
+                  DROP;
+                  SWAP;
+                  DROP
+                }
+                {
+                  DROP 2
+                };
+              PUSH mutez 0;
+              DUP 2;
+              COMPARE;
+              EQ;
+              IF
+                {
+                  PUSH string "NOT_FOR_SALE";
+                  FAILWITH
+                }
+                {
+                };
+              DUP 2;
+              GET 6;
+              DUP 2;
+              MUL;
+              DUP;
+              AMOUNT;
+              COMPARE;
+              NEQ;
+              IF
+                {
+                  PUSH string "WRONG_AMOUNT";
+                  FAILWITH
+                }
+                {
+                };
+              SENDER;
+              DUP 4;
+              GET 3;
+              DUP 5;
+              CAR;
+              DUP 3;
+              PAIR 3;
+              DUP 6;
+              GET 11;
+              DUP 2;
+              GET;
+              IF_NONE
+                {
+                  LEVEL;
+                  PUSH nat 0;
+                  DUP;
+                  PAIR 3
+                }
+                {
+                };
+              DUP 6;
+              GET 5;
+              IF_LEFT
+                {
+                  DROP;
+                  DUP;
+                  DUP 7;
+                  GET 6;
+                  DIG 2;
+                  CAR;
+                  ADD;
+                  UPDATE 1
+                }
+                {
+                  DROP;
+                  DUP;
+                  DUP 7;
+                  GET 6;
+                  DIG 2;
+                  GET 3;
+                  ADD;
+                  UPDATE 3
+                };
+              DUP 6;
+              CAR;
+              CONTRACT unit;
+              IF_NONE
+                {
+                  PUSH string "ARTIST_CANNOT_RECEIVE";
+                  FAILWITH
+                }
+                {
+                };
+              DUP 5;
+              UNIT;
+              TRANSFER_TOKENS;
+              NOW;
+              DIG 5;
+              DIG 6;
+              DUP 8;
+              GET 6;
+              DUP 9;
+              GET 5;
+              DUP 10;
+              GET 3;
+              DIG 10;
+              CAR;
+              DIG 10;
+              PAIR 8;
+              {
+                DROP;
+                NONE key_hash;
+                SET_DELEGATE
+              };
+              DIG 4;
+              DUP;
+              GET 11;
+              DIG 4;
+              SOME;
+              DIG 5;
+              UPDATE;
+              UPDATE 11;
+              NIL operation;
+              DIG 2;
+              CONS;
+              DIG 2;
+              CONS
+            }
+            {
+              IF_LEFT
+                {
+                  SENDER;
+                  DUP 3;
+                  GET 7;
+                  DUP 3;
+                  CAR;
+                  DUP 3;
+                  PAIR;
+                  GET;
+                  IF_NONE
+                    {
+                      PUSH string "UNKNOWN_COLLECTION";
+                      FAILWITH
+                    }
+                    {
+                    };
+                  DUP 3;
+                  GET 3;
+                  DUP 4;
+                  CAR;
+                  DUP 4;
+                  PAIR 3;
+                  DUP 5;
+                  GET 9;
+                  DUP 2;
+                  MEM;
+                  DUP 5;
+                  GET 4;
+                  IF
+                    {
+                      DUP 6;
+                      GET 5;
+                      DUP 6;
+                      GET 3;
+                      DUP 6;
+                      PAIR;
+                      GET;
+                      IF_NONE
+                        {
+                          PUSH string "UNKNOWN_LISTING";
+                          FAILWITH
+                        }
+                        {
+                        };
+                      DIG 3;
+                      GET 9;
+                      SWAP;
+                      GET 11;
+                      COMPARE;
+                      NEQ;
+                      IF
+                        {
+                          PUSH string "WEBSITE_MISMATCH";
+                          FAILWITH
+                        }
+                        {
+                        };
+                      IF
+                        {
+                          PUSH string "ALREADY_MEMBER";
+                          FAILWITH
+                        }
+                        {
+                        }
+                    }
+                    {
+                      DIG 2;
+                      DROP;
+                      IF
+                        {
+                        }
+                        {
+                          PUSH string "NOT_MEMBER";
+                          FAILWITH
+                        }
+                    };
+                  NOW;
+                  DUP 4;
+                  GET 4;
+                  DUP 5;
+                  GET 3;
+                  DUP 6;
+                  CAR;
+                  DIG 5;
+                  PAIR 5;
+                  {
+                    DROP;
+                    NONE key_hash;
+                    SET_DELEGATE
+                  };
+                  DIG 3;
+                  DUP;
+                  GET 9;
+                  DIG 4;
+                  GET 4;
+                  IF
+                    {
+                      UNIT;
+                      SOME
+                    }
+                    {
+                      NONE unit
+                    };
+                  DIG 4;
+                  UPDATE;
+                  UPDATE 9;
+                  NIL operation;
+                  DIG 2;
+                  CONS
+                }
+                {
+                  IF_LEFT
+                    {
+                      SENDER;
+                      DUP 3;
+                      GET 3;
+                      DUP 3;
+                      GET 11;
+                      DUP 3;
+                      PAIR;
+                      GET;
+                      IF_NONE
+                        {
+                          PUSH string "UNKNOWN_WEBSITE";
+                          FAILWITH
+                        }
+                        {
+                        };
+                      DUP 4;
+                      GET 7;
+                      DUP 4;
+                      CAR;
+                      DUP 4;
+                      PAIR;
+                      GET;
+                      IF_NONE
+                        {
+                        }
+                        {
+                          GET 9;
+                          DUP 4;
+                          GET 11;
+                          COMPARE;
+                          NEQ;
+                          IF
+                            {
+                              PUSH string "WEBSITE_ID_IMMUTABLE";
+                              FAILWITH
+                            }
+                            {
+                            }
+                        };
+                      NOW;
+                      DUP 4;
+                      GET 12;
+                      DIG 2;
+                      DUP 5;
+                      GET 11;
+                      DUP 6;
+                      GET 9;
+                      DUP 7;
+                      GET 7;
+                      DUP 8;
+                      GET 5;
+                      DUP 9;
+                      GET 3;
+                      DUP 10;
+                      CAR;
+                      DUP 12;
+                      CAR;
+                      DUP 11;
+                      GET;
+                      IF_NONE
+                        {
+                          PUSH bytes 0x
+                        }
+                        {
+                        };
+                      DUP 11;
+                      PAIR 11;
+                      {
+                        DROP;
+                        NONE key_hash;
+                        SET_DELEGATE
+                      };
+                      DIG 3;
+                      DUP;
+                      GET 7;
+                      DUP 5;
+                      GET 12;
+                      DUP 6;
+                      GET 11;
+                      DUP 7;
+                      GET 9;
+                      DUP 8;
+                      GET 7;
+                      DUP 9;
+                      GET 5;
+                      DUP 10;
+                      GET 3;
+                      PAIR 6;
+                      SOME;
+                      DIG 5;
+                      CAR;
+                      DIG 5;
+                      PAIR;
+                      UPDATE;
+                      UPDATE 7;
+                      NIL operation;
+                      DIG 2;
+                      CONS
+                    }
+                    {
+                      IF_LEFT
+                        {
+                          SENDER;
+                          DUP 3;
+                          GET 3;
+                          DUP 3;
+                          GET 13;
+                          DUP 3;
+                          PAIR;
+                          GET;
+                          IF_NONE
+                            {
+                              PUSH string "UNKNOWN_WEBSITE";
+                              FAILWITH
+                            }
+                            {
+                            };
+                          DUP 4;
+                          GET 5;
+                          DUP 4;
+                          CAR;
+                          DUP 4;
+                          PAIR;
+                          GET;
+                          IF_NONE
+                            {
+                              PUSH nat 0;
+                              DUP 4;
+                              GET 16;
+                              SIZE;
+                              COMPARE;
+                              EQ;
+                              IF
+                                {
+                                  PUSH string "EMPTY_FILE_HASH";
+                                  FAILWITH
+                                }
+                                {
+                                }
+                            }
+                            {
+                              DUP;
+                              GET 11;
+                              DUP 5;
+                              GET 13;
+                              COMPARE;
+                              NEQ;
+                              IF
+                                {
+                                  PUSH string "WEBSITE_ID_IMMUTABLE";
+                                  FAILWITH
+                                }
+                                {
+                                };
+                              GET 14;
+                              DUP 4;
+                              GET 16;
+                              COMPARE;
+                              NEQ;
+                              IF
+                                {
+                                  PUSH string "FILE_HASH_IMMUTABLE";
+                                  FAILWITH
+                                }
+                                {
+                                }
+                            };
+                          NOW;
+                          DUP 4;
+                          GET 16;
+                          DUP 5;
+                          GET 15;
+                          DIG 3;
+                          DUP 6;
+                          GET 13;
+                          DUP 7;
+                          GET 11;
+                          DUP 8;
+                          GET 9;
+                          DUP 9;
+                          GET 7;
+                          DUP 10;
+                          GET 5;
+                          DUP 11;
+                          GET 3;
+                          DUP 12;
+                          CAR;
+                          DUP 14;
+                          CAR;
+                          DUP 13;
+                          GET;
+                          IF_NONE
+                            {
+                              PUSH bytes 0x
+                            }
+                            {
+                            };
+                          DUP 13;
+                          PAIR 13;
+                          {
+                            DROP;
+                            NONE key_hash;
+                            SET_DELEGATE
+                          };
+                          DIG 3;
+                          DUP;
+                          GET 5;
+                          DUP 5;
+                          GET 16;
+                          DUP 6;
+                          GET 15;
+                          DUP 7;
+                          GET 13;
+                          DUP 8;
+                          GET 11;
+                          DUP 9;
+                          GET 9;
+                          DUP 10;
+                          GET 7;
+                          DUP 11;
+                          GET 5;
+                          DUP 12;
+                          GET 3;
+                          PAIR 8;
+                          SOME;
+                          DIG 5;
+                          CAR;
+                          DIG 5;
+                          PAIR;
+                          UPDATE;
+                          UPDATE 5;
+                          NIL operation;
+                          DIG 2;
+                          CONS
+                        }
+                        {
+                          IF_LEFT
+                            {
+                              SENDER;
+                              NOW;
+                              DUP 3;
+                              CDR;
+                              DUP 4;
+                              CAR;
+                              DUP 4;
+                              PAIR 4;
+                              {
+                                DROP;
+                                NONE key_hash;
+                                SET_DELEGATE
+                              };
+                              DIG 3;
+                              DUP;
+                              GET 3;
+                              DUP 5;
+                              CDR;
+                              SOME;
+                              DIG 5;
+                              CAR;
+                              DIG 5;
+                              PAIR;
+                              UPDATE;
+                              UPDATE 3;
+                              NIL operation;
+                              DIG 2;
+                              CONS
+                            }
+                            {
+                              SWAP;
+                              DUP;
+                              CAR;
+                              DIG 2;
+                              SOME;
+                              SENDER;
+                              UPDATE;
+                              UPDATE 1;
+                              NIL operation
+                            }
+                        }
+                    }
+                }
+            }
+        };
+      PAIR
+    }
+}

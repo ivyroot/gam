@@ -70,12 +70,22 @@ npm run prove:helmholtz
 | `purchase.p5_ops` | Operations are exactly `[transfer of AMOUNT to the artist; event]` | Verified |
 | `purchase.p6_license_frame` | Only the buyer's own `(sender, artist, target)` licence entry can change | Verified |
 | `purchase.p6_frame` | The other six big_maps are unchanged | Verified |
+| `<entrypoint>.p6_frame` (×6) | `set_name`, `set_website`, `list`, `set_collection`, `set_collection_item` and `review` each change only the sender's own key in their one big_map; the other six are unchanged | Verified |
+| `list.p7_write_once` | Success needs the sender's website; writes exactly the given record; an existing listing keeps `website_id` and `file_hash`; a new one needs a non-empty `file_hash` | Verified |
+| `list.p7_failures` | Fails only with `UNKNOWN_WEBSITE`, `WEBSITE_ID_IMMUTABLE`, `FILE_HASH_IMMUTABLE` or `EMPTY_FILE_HASH`, each under exactly its condition | Verified |
+| `set_collection.p7_write_once` | Success needs the sender's website; writes exactly the given record; an existing collection keeps `website_id` | Verified |
+| `set_collection.p7_failures` | Fails only with `UNKNOWN_WEBSITE` or `WEBSITE_ID_IMMUTABLE`, each under exactly its condition | Verified |
+| `review.p8_gate` | Success needs the sender's licence bought in an earlier block, and a rating in 1–10 or a comment | Verified |
+| `review.p8_posted_at` | Stores exactly the given rating and comment with `updated_at = now`; `posted_at` is kept from the first review | Verified |
+| `review.p8_failures` | Fails only with `NO_LICENSE`, `EMPTY_REVIEW`, `BAD_RATING` or `TOO_EARLY`, each under exactly its condition | Verified |
 
-Every spec has at least one deliberately wrong twin that must not verify. Those
-about a failing call are refuted with a counterexample. Those about a
-successful purchase end `UNKNOWN`: Z3 can't build models through Helmholtz's
-sequence encoding of the operation list. Proofs take about a second each; the
-whole run, wrong twins included, about five minutes.
+Specs about `purchase` and the P7/P8 specs have deliberately wrong twins that
+must not verify. `purchase.p2_failures.wrong` and `review.p8_failures.wrong` are
+refuted with a counterexample. The rest end `UNKNOWN`: Z3 can't build models
+through Helmholtz's sequence encoding of the operation list, or (for
+`list.p7_failures.wrong`, a failing call) most likely its string encoding of
+`list`'s bytes parameters. Proofs take a second or two each; the whole run, wrong twins
+included, about ten minutes of solver time (longer on a busy machine).
 
 Helmholtz builds natively into `tezos/vendor/helmholtz` with
 `proofs/helmholtz/setup.sh`, which documents the workarounds its README needs.
