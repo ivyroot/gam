@@ -5,7 +5,8 @@
   "scripts": {
     "build": "./scripts/build.sh",
     "test:unit": "ligo run test test/gam.test.mligo",
-    "test:tezbox": "node --test test/tezbox.test.mjs"
+    "test:tezbox": "node --test test/tezbox.test.mjs",
+    "prove:helmholtz": "./proofs/helmholtz/run.sh"
   },
   "devDependencies": {
     "@taquito/michel-codec": "25.1.0",

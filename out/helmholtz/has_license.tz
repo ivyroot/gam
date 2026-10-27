@@ -1,0 +1,121 @@
+{
+  parameter
+    (pair
+      (pair
+        address
+        (pair
+          address
+          (or
+            (nat %listing)
+            (nat %collection))))
+      (pair
+        (big_map %names address bytes)
+        (pair
+          (big_map %websites
+            (pair address nat)
+            string)
+          (pair
+            (big_map %listings
+              (pair address nat)
+              (pair
+                (bytes %title)
+                (pair
+                  (bytes %item_type)
+                  (pair
+                    (bytes %description)
+                    (pair
+                      (mutez %personal_display_price)
+                      (pair
+                        (mutez %commercial_display_price)
+                        (pair
+                          (nat %website_id)
+                          (pair
+                            (bool %active)
+                            (bytes %file_hash)))))))))
+            (pair
+              (big_map %collections
+                (pair address nat)
+                (pair
+                  (bytes %title)
+                  (pair
+                    (bytes %description)
+                    (pair
+                      (mutez %personal_display_price)
+                      (pair
+                        (mutez %commercial_display_price)
+                        (pair
+                          (nat %website_id)
+                          (bool %active)))))))
+              (pair
+                (big_map %collection_items
+                  (pair
+                    address
+                    (pair nat nat))
+                  unit)
+                (pair
+                  (big_map %licenses
+                    (pair
+                      address
+                      (pair
+                        address
+                        (or
+                          (nat %listing)
+                          (nat %collection))))
+                    (pair
+                      (nat %personal)
+                      (pair
+                        (nat %commercial)
+                        (nat %purchased_at_level))))
+                  (big_map %reviews
+                    (pair
+                      address
+                      (pair
+                        address
+                        (or
+                          (nat %listing)
+                          (nat %collection))))
+                    (pair
+                      (option %rating nat)
+                      (pair
+                        (option %comment bytes)
+                        (pair
+                          (timestamp %posted_at)
+                          (timestamp %updated_at))))))))))));
+  storage
+    (pair
+      (nat %personal)
+      (pair
+        (nat %commercial)
+        (nat %purchased_at_level)));
+<< ContractAnnot
+  { (((buyer, (artist, target)), (_, _, _, _, _, licenses, _)), _) | True } ->
+  { (ops, r) | ops = [] &&
+      r = (match find_opt_b (buyer, (artist, target)) licenses with
+           | Some l -> l
+           | None -> (0, (0, 0))) } &
+  { _ | False } >>
+  code
+    {
+      CAR;
+      {
+        UNPAIR;
+        UNPAIR 3;
+        DIG 3;
+        GET 11;
+        DUG 3;
+        PAIR 3;
+        GET;
+        IF_NONE
+          {
+            PUSH nat 0;
+            DUP;
+            DUP;
+            PAIR 3
+          }
+          {
+          }
+      };
+      NIL operation;
+      PAIR
+    }
+}

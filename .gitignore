@@ -1,3 +1,5 @@
 .ligo/
 node_modules/
 .DS_Store
+out/helmholtz/*.log
+out/helmholtz/*.refx/

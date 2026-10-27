@@ -16,6 +16,7 @@ Written in CameLIGO so that its compiled Michelson can be formally verified.
 | `test/gam.test.mligo` | Unit tests on LIGO's in-process interpreter |
 | `test/tezbox.test.mjs` | Integration tests on the local TezBox node (Taquito 25.1.0): batches, payouts, event payloads, views |
 | `scripts/build.sh` | Compile, prepare the prover copy, inventory instructions |
+| `proofs/helmholtz/` | Helmholtz specs, the runner, and the native setup script |
 | `out/` | Build output, checked in so proofs and tests point at an exact `.tz` |
 | `LIGO_VERSION` | The pinned compiler version; `build.sh` refuses any other |
 
@@ -47,6 +48,25 @@ npm run test:tezbox
 - `out/gam.prove.tz`: the prover copy (each `EMIT` replaced by `{ DROP ; NONE key_hash ; SET_DELEGATE }`, views removed)
 - `out/views/*.view.tz`: each view wrapped as a stand-alone program
 - `out/inventory/new_forms.txt`: instruction forms the provers have not yet been checked against
+
+## Proofs
+
+Helmholtz (Z3-backed refinement types) checks specs written against the
+compiled Michelson. Each `proofs/helmholtz/NAME.spec` is spliced into a copy of
+the matching `.tz` under `out/helmholtz/`; `NAME.wrong.spec` files are
+deliberately false and must be rejected.
+
+```bash
+npm run prove:helmholtz
+```
+
+| Spec | Property | Result (Oct 26, 2026) |
+| --- | --- | --- |
+| `has_license` | Returns the stored licence, or all zeros for an unwritten key; never fails; no operations | Verified |
+| `in_collection` | True exactly when the membership key exists; never fails; no operations | Verified |
+
+Helmholtz builds natively into `tezos/vendor/helmholtz` with
+`proofs/helmholtz/setup.sh`, which documents the workarounds its README needs.
 
 ## Notes for client tools
 
