@@ -1,0 +1,41 @@
+# view_in_collection  (source: view_in_collection.json)
+# 8 distinct instructions
+
+## instructions  (count  sections)
+CAR                     1  code
+DIG                     1  code
+DUG                     1  code
+GET                     1  code
+MEM                     1  code
+NIL                     1  code
+PAIR                    2  code
+UNPAIR                  2  code
+
+## forms  (count; `X n` = takes an integer immediate)
+CAR                     1
+DIG n                   1
+DUG n                   1
+GET n                   1
+MEM                     1
+NIL                     1
+PAIR                    1
+PAIR n                  1
+UNPAIR                  1
+UNPAIR n                1
+
+## types  (count)
+address                10
+big_map                 7
+bool                    3
+bytes                   8
+mutez                   4
+nat                    17
+operation               1
+option                  2
+or                      2
+pair                   35
+string                  1
+timestamp               2
+unit                    1
+
+## data constructors  (count)

@@ -1,0 +1,107 @@
+# gam  (source: gam.json)
+# 39 distinct instructions
+
+## instructions  (count  sections)
+ADD                     2  code
+AMOUNT                  1  code
+CAR                    22  code
+CDR                     2  code
+COMPARE                11  code
+CONS                    7  code
+CONTRACT                1  code
+DIG                    43  code,view
+DROP                    7  code
+DUG                     2  view
+DUP                   131  code,view
+EMIT                    6  code
+EQ                      3  code
+FAILWITH               23  code
+GET                   107  code,view
+GT                      1  code
+IF                     16  code
+IF_LEFT                 9  code
+IF_NONE                17  code,view
+LE                      1  code
+LEVEL                   2  code
+LT                      1  code
+MEM                     2  code,view
+MUL                     1  code
+NEQ                     5  code
+NIL                     7  code
+NONE                    1  code
+NOW                     6  code
+OR                      1  code
+PAIR                   30  code,view
+PUSH                   32  code,view
+SENDER                  7  code
+SIZE                    1  code
+SOME                    7  code
+SWAP                    7  code
+TRANSFER_TOKENS         1  code
+UNIT                    2  code
+UNPAIR                  6  code,view
+UPDATE                 16  code
+
+## forms  (count; `X n` = takes an integer immediate)
+ADD                     2
+AMOUNT                  1
+CAR                    22
+CDR                     2
+COMPARE                11
+CONS                    7
+CONTRACT                1
+DIG n                  43
+DROP                    5
+DROP n                  2
+DUG n                   2
+DUP                    21
+DUP n                 110
+EMIT                    6
+EQ                      3
+FAILWITH               23
+GET                    14
+GET n                  93
+GT                      1
+IF                     16
+IF_LEFT                 9
+IF_NONE                17
+LE                      1
+LEVEL                   2
+LT                      1
+MEM                     2
+MUL                     1
+NEQ                     5
+NIL                     7
+NONE                    1
+NOW                     6
+OR                      1
+PAIR                   14
+PAIR n                 16
+PUSH                   32
+SENDER                  7
+SIZE                    1
+SOME                    7
+SWAP                    7
+TRANSFER_TOKENS         1
+UNIT                    2
+UNPAIR                  4
+UNPAIR n                2
+UPDATE                  7
+UPDATE n                9
+
+## types  (count)
+address                22
+big_map                 7
+bool                    9
+bytes                  27
+mutez                  15
+nat                    54
+operation               7
+option                  6
+or                     15
+pair                  103
+string                 28
+timestamp               9
+unit                    7
+
+## data constructors  (count)
