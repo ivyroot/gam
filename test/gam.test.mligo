@@ -5,7 +5,8 @@
 // Fast feedback only. The suite of record runs the compiled out/gam.tz on
 // TezBox with Taquito. One rule cannot be tested here: review's "strictly a
 // later block" gate, because every transfer below bakes its own block, so a
-// purchase and a review can never share one. That needs a TezBox batch test.
+// purchase and a review can never share one. test/tezbox.test.mjs covers it
+// with a wallet batch.
 
 #import "../src/gam.mligo" "Gam"
 

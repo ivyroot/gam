@@ -1,0 +1,18 @@
+{
+  "name": "gam",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "./scripts/build.sh",
+    "test:unit": "ligo run test test/gam.test.mligo",
+    "test:tezbox": "node --test test/tezbox.test.mjs"
+  },
+  "devDependencies": {
+    "@taquito/michel-codec": "25.1.0",
+    "@taquito/signer": "25.1.0",
+    "@taquito/taquito": "25.1.0"
+  },
+  "dependencies": {
+    "@taquito/michelson-encoder": "25.1.0"
+  }
+}
