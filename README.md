@@ -64,6 +64,18 @@ npm run prove:helmholtz
 | --- | --- | --- |
 | `has_license` | Returns the stored licence, or all zeros for an unwritten key; never fails; no operations | Verified |
 | `in_collection` | True exactly when the membership key exists; never fails; no operations | Verified |
+| `purchase.p1_payment` | Succeeds only for an existing, active target with a non-zero price for the tier, `quantity > 0`, and exactly unit price × `quantity` sent | Verified |
+| `purchase.p2_failures` | Fails only with `ZERO_QUANTITY`, `UNKNOWN_LISTING`, `UNKNOWN_COLLECTION`, `NOT_ACTIVE`, `NOT_FOR_SALE`, mutez overflow, `WRONG_AMOUNT` or `ARTIST_CANNOT_RECEIVE`, each under exactly its condition | Verified |
+| `purchase.p3_p4_license` | The buyer's licence count for the tier rises by exactly `quantity`, the other is unchanged, and `purchased_at_level` is set only on the first purchase | Verified |
+| `purchase.p5_ops` | Operations are exactly `[transfer of AMOUNT to the artist; event]` | Verified |
+| `purchase.p6_license_frame` | Only the buyer's own `(sender, artist, target)` licence entry can change | Verified |
+| `purchase.p6_frame` | The other six big_maps are unchanged | Verified |
+
+Every spec has at least one deliberately wrong twin that must not verify. Those
+about a failing call are refuted with a counterexample. Those about a
+successful purchase end `UNKNOWN`: Z3 can't build models through Helmholtz's
+sequence encoding of the operation list. Proofs take about a second each; the
+whole run, wrong twins included, about five minutes.
 
 Helmholtz builds natively into `tezos/vendor/helmholtz` with
 `proofs/helmholtz/setup.sh`, which documents the workarounds its README needs.
