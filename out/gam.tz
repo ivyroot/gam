@@ -274,10 +274,8 @@
                           COMPARE ;
                           NEQ ;
                           IF { PUSH string "WEBSITE_MISMATCH" ; FAILWITH } {} ;
-                          DUP ;
-                          IF { PUSH string "ALREADY_MEMBER" ; FAILWITH }
-                             { IF {} { PUSH string "NOT_MEMBER" ; FAILWITH } } }
-                        { DIG 2 ; DROP 2 } ;
+                          IF { PUSH string "ALREADY_MEMBER" ; FAILWITH } {} }
+                        { DIG 2 ; DROP ; IF {} { PUSH string "NOT_MEMBER" ; FAILWITH } } ;
                      NOW ;
                      DUP 4 ;
                      GET 4 ;

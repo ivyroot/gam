@@ -12,7 +12,7 @@ CONTRACT                1  code
 DIG                    43  code,view
 DROP                    7  code
 DUG                     2  view
-DUP                   131  code,view
+DUP                   130  code,view
 EMIT                    6  code
 EQ                      3  code
 FAILWITH               23  code
@@ -51,10 +51,10 @@ COMPARE                11
 CONS                    7
 CONTRACT                1
 DIG n                  43
-DROP                    5
-DROP n                  2
+DROP                    6
+DROP n                  1
 DUG n                   2
-DUP                    21
+DUP                    20
 DUP n                 110
 EMIT                    6
 EQ                      3

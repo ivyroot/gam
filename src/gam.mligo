@@ -312,15 +312,17 @@ type reviewed_event = {
     | Some c -> c in
   let key = (artist, p.collection_id, p.listing_id) in
   let is_member = Big_map.mem key s.collection_items in
+  // a match, not if/else: a nested one-armed `if` would capture the `else`
   let () =
-    if p.included then
+    match p.included with
+    | true ->
       let l =
         match Big_map.find_opt (artist, p.listing_id) s.listings with
         | None -> failwith "UNKNOWN_LISTING"
         | Some l -> l in
       let () = if l.website_id <> c.website_id then failwith "WEBSITE_MISMATCH" in
       if is_member then failwith "ALREADY_MEMBER"
-    else
+    | false ->
       if not is_member then failwith "NOT_MEMBER" in
   let value = if p.included then Some () else None in
   let ev = Tezos.emit "%collection_item_set" ({

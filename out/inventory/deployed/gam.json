@@ -2816,9 +2816,6 @@
                                   ]
                                 },
                                 {
-                                  "prim": "DUP"
-                                },
-                                {
                                   "prim": "IF",
                                   "args": [
                                     [
@@ -2837,30 +2834,7 @@
                                         "prim": "FAILWITH"
                                       }
                                     ],
-                                    [
-                                      {
-                                        "prim": "IF",
-                                        "args": [
-                                          [],
-                                          [
-                                            {
-                                              "prim": "PUSH",
-                                              "args": [
-                                                {
-                                                  "prim": "string"
-                                                },
-                                                {
-                                                  "string": "NOT_MEMBER"
-                                                }
-                                              ]
-                                            },
-                                            {
-                                              "prim": "FAILWITH"
-                                            }
-                                          ]
-                                        ]
-                                      }
-                                    ]
+                                    []
                                   ]
                                 }
                               ],
@@ -2874,11 +2848,28 @@
                                   ]
                                 },
                                 {
-                                  "prim": "DROP",
+                                  "prim": "DROP"
+                                },
+                                {
+                                  "prim": "IF",
                                   "args": [
-                                    {
-                                      "int": "2"
-                                    }
+                                    [],
+                                    [
+                                      {
+                                        "prim": "PUSH",
+                                        "args": [
+                                          {
+                                            "prim": "string"
+                                          },
+                                          {
+                                            "string": "NOT_MEMBER"
+                                          }
+                                        ]
+                                      },
+                                      {
+                                        "prim": "FAILWITH"
+                                      }
+                                    ]
                                   ]
                                 }
                               ]

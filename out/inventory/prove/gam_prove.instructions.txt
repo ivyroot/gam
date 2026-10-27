@@ -11,7 +11,7 @@ CONS                    7  code
 CONTRACT                1  code
 DIG                    41  code
 DROP                   13  code
-DUP                   129  code
+DUP                   128  code
 EQ                      3  code
 FAILWITH               23  code
 GET                   104  code
@@ -50,9 +50,9 @@ COMPARE                11
 CONS                    7
 CONTRACT                1
 DIG n                  41
-DROP                   11
-DROP n                  2
-DUP                    19
+DROP                   12
+DROP n                  1
+DUP                    18
 DUP n                 110
 EQ                      3
 FAILWITH               23
