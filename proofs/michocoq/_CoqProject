@@ -1,0 +1,6 @@
+-Q ../../../../vendor/mi-cho-coq/src/michocoq Michocoq
+-R . Gam
+gam_prove_string.v
+gam_source.v
+purchase_p5.v
+assumptions.v

@@ -3,3 +3,13 @@ node_modules/
 .DS_Store
 out/helmholtz/*.log
 out/helmholtz/*.refx/
+out/michocoq.log
+proofs/michocoq/*.vo
+proofs/michocoq/*.vok
+proofs/michocoq/*.vos
+proofs/michocoq/*.glob
+proofs/michocoq/.*.aux
+proofs/michocoq/Makefile.coq
+proofs/michocoq/Makefile.coq.conf
+proofs/michocoq/.Makefile.coq.d
+proofs/michocoq/.lia.cache
