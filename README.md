@@ -4,9 +4,9 @@ One shared, immutable, admin-free Tezos contract where artists list works and
 collections and sell non-transferable personal and commercial display licenses.
 Written in CameLIGO so that its compiled Michelson can be formally verified.
 
-- Spec: `tezos/art-sale-ever-growing-mono-contract-plan/art-sale-ever-growing-mono-contract-plan-oct-26.md`
-- Why CameLIGO, events and views: `tezos/updates/tezos_source_language_for_proving_Oct_22_2026.md`
-- What was simplified for proving: `tezos/updates/art_sale_contract_provability_review_Oct_22_2026.md`
+- Spec: `doc/whitepaper.md`
+- Why CameLIGO, events and views: `doc/tezos_source_language_for_proving_Oct_22_2026.md`
+- What was simplified for proving: `doc/art_sale_contract_provability_review_Oct_22_2026.md`
 
 ## Layout
 
